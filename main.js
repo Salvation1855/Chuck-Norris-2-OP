@@ -44,6 +44,9 @@ var fpsTime = 0;
 var chuckNorris = document.createElement("img");
 chuckNorris.src = "hero.png";
 
+var badguy = document.createElement("img");
+badguy.src = "enemy.png";
+
 function run()
 {
 	context.fillStyle = "#ccc";		
@@ -51,7 +54,9 @@ function run()
 	
 	var deltaTime = getDeltaTime();
 	
-	context.drawImage(chuckNorris, SCREEN_WIDTH/2 - chuckNorris.width/2, SCREEN_HEIGHT/2 - chuckNorris.height/2);
+	context.drawImage(chuckNorris, SCREEN_WIDTH / 2 - chuckNorris.width / 2, SCREEN_HEIGHT / 2 - chuckNorris.height / 2);
+
+	context.drawImage(badguy, SCREEN_WIDTH / 2 - chuckNorris.width / 2, SCREEN_HEIGHT / 2 - chuckNorris.height / 2);
 	
 		
 	// update the frame counter 
@@ -73,7 +78,51 @@ function run()
 
 //-------------------- Don't modify anything below here
 var player = new Player();
+var enemy = new Enemy();
 var keyboard = new Keyboard();
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//the number of layers in your map
+var LAYER_COUNT = 3;
+//specifies how big your level is, etc: 60 tiles wide by 15 tiles high
+var MAP = { tw: 60, th: 15 };
+//the width/height of a tile (in pixles). Your tile should be a square These dimensions refer to the map grid tiles. Our tileset tiles (the images) can be different dimensions.
+var TILE = 35;
+//the width/height of a tile in the tileset
+var TILESET_TILE = TILE * 2;
+//How many pixels are between the image border and the tile images in the tilemap
+var TILESET_PADDING = 2;
+//how many pixels are between tile images in the tilemap
+var TILESET_SPACING = 2;
+//How many columns of tile images are in the tileset 
+var TILESET_COUNT_X = 14;
+//How many rows of tile images are in the tileset 
+var TILESET_COUNT_Y = 14;
+
+//load the images to use for the level tiles
+var tileset = document.createElement("img");
+tileset.src = "tileset.png";
+
+//this is so it will draw the tiles from a different software
+function drawMap() {
+    for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) {
+        var idx = 0;
+        for (var y = 0; y < level1.layers[layerIdx].height; y++) {
+            for (var x = 0; x < level1.layers[layerIdx].width; x++) {
+                if (level1.layers[layerIdx].data[idx] != 0) {
+                    // the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+                    // correct tile
+                    var tileIndex = level1.layers[layerIdx].data[idx] - 1;
+                    var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+                    var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_X)) * (TILESET_TILE + TILESET_SPACING);
+                    context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x * TILE, (y - 1) * TILE, TILESET_TILE, TILESET_TILE);
+                }
+                idx++;
+            }
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function run()
 {
@@ -84,6 +133,12 @@ function run()
     
     player.update(deltaTime);
     player.draw();
+
+    enemy.update(deltaTime);
+    enemy.draw();
+
+    
+
 
     //update frame counter
     fpsTime += deltaTime;
