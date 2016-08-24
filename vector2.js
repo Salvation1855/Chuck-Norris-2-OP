@@ -1,43 +1,57 @@
-var x1 = 0;
-var x2 = 0;
-var y1 = 0;
-var y2 = 0;
+Vector2.js
 
-var Set = function ()
+//constructor for the vector2 object
+var Vector2 = function ()
 {
-    x1 = 0;
-    x2 = 0;
-    y1 = 0;
-    y2 = 0;
-};
+    this.x = 0;
+    this.y = 0;
+}
 
-var Normalize = function ()
+//set the components of the vector object
+Vector2.prototype.Set = function (x, y)
 {
-    x1 = 250;
-    y1 = 160;
+    this.x = x;
+    this.y = y;
+}
 
-    var length = Math.sqrt(x * x + y * y);
-
-    var normalX = x / length;
-    var normalY = y / length;
-};
-
-var Add = function ()
+//normalize the vector
+Vector2.prototype.Normalize = function (x, y)
 {
-    var x3 = x1 + x2;
-    var y3 = y1 + y2;
-};
+    var newVector = new Vector2();
 
-var Subtract = function ()
-{
-    var x3 = x1 - x2;
-    var y3 = y1 - y2;
-};
+    var length = Math.sqrt(this.x * this.x + this.y * this.y);
 
-var Multiply = function()
+    var normalX = this.x / length;
+    var normalY = this.y / length;
+
+    return newVector;
+}
+
+//add two vectors together
+Vector2.prototype.Add = function (otherVector)
 {
+    var newVector = new Vector2();
+    newVector.Set(this.x + otherVector.x, this.y + otherVector.y);
+    return newVector;
+}
+
+//add subtract and multiply functions here
+Vector2.prototype.Subtract = function (otherVector)
+{
+    var newVector = new Vector2();
+    newVector.Set(this.x - otherVector.x, this.y - otherVector.y);
+    return newVector;
+}
+
+//MultiplyScaler(num)
+Vector2.prototype.Multiply = function (x, y)
+    {
+    var newVector = new Vector2();
+
     var scalar;
 
-    var x3 = x1 * scalar;
-    var y3 = y1 * scalar;
-}
+    var x3 = this.x * scalar;
+    var y3 = this.y * scalar;
+
+    return newVector;
+    }
