@@ -4,6 +4,13 @@ var context = canvas.getContext("2d");
 var startFrameMillis = Date.now();
 var endFrameMillis = Date.now();
 
+//this adds the variables for your game states
+var STATE_SPLASH = 0;
+var STATE_GAME = 1;
+var STATE_GAMEOVER = 2;
+
+var gameState = STATE_SPLASH;
+
 // This function will return the time in seconds since the function 
 // was last called
 // You should only call this function once per frame
@@ -48,14 +55,8 @@ var badguy = document.createElement("img");
 badguy.src = "enemy.png";
 
 
-//-------------------- Don't modify anything below here
-var player = new Player();
-var enemy = new Enemy();
-var keyboard = new Keyboard();
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//physics for the game
-
+//the width/height of a tile (in pixles). Your tile should be a square These dimensions refer to the map grid tiles. Our tileset tiles (the images) can be different dimensions.
+var TILE = 35;
 //abitrary choice for 1m
 var METER = TILE;
 //// very exaggerated gravity (6x)
@@ -71,14 +72,22 @@ var FRICTION = MAXDX * 6;
 // (a large) instantaneous jump impulse
 var JUMP = METER * 1500;
 
+//-------------------- Don't modify anything below here
+var player = new Player();
+var enemy = new Enemy();
+var keyboard = new Keyboard();
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//physics for the game
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //the number of layers in your map
 var LAYER_COUNT = 3;
 //specifies how big your level is, etc: 60 tiles wide by 15 tiles high
 var MAP = { tw: 60, th: 15 };
-//the width/height of a tile (in pixles). Your tile should be a square These dimensions refer to the map grid tiles. Our tileset tiles (the images) can be different dimensions.
-var TILE = 35;
 //the width/height of a tile in the tileset
 var TILESET_TILE = TILE * 2;
 //How many pixels are between the image border and the tile images in the tilemap
@@ -198,17 +207,28 @@ function drawMap() {
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function run()
+var splashTimer = 3;
+function runSplash(deltaTime)
 {
-    context.fillStyle = "#ccc";
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    //this adds the splash
+    splashTimer -= deltaTime;
+    if (splashTimer <= 0)
+    {
+        gameState = STATE_GAME;
+        return;
+    }
+    //this customizies the splash 
+    context.fillStyle = "#000";
+    context.font = "35px Arial";
+    context.fillText("Start Game", 200, 240);
+}
 
+function runGame(deltaTime)
+{
     //update frame counter
     fpsTime += deltaTime;
     fpsCount++;
-    if(fpsTime >= 1)
-    {
+    if (fpsTime >= 1) {
         fpsTime -= 1;
         fps = fpsCount;
         fpsCount = 0;
@@ -220,14 +240,41 @@ function run()
     context.fillText("FPS:" + fps, 5, 20, 100);
     drawMap();
 
-    //draws the player and enemy
-    var deltaTime = getDeltaTime();
+   
 
     player.update(deltaTime);
     player.draw();
 
     enemy.update(deltaTime);
     enemy.draw();
+}
+
+function runGameOver(deltaTime)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function run()
+{
+    context.fillStyle = "#ccc";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    var deltaTime = getDeltaTime();
+
+    switch(gameState)
+    {
+        case STATE_SPLASH:
+            runSplash(deltaTime);
+            break;
+        case STATE_GAME:
+            runGame(deltaTime);
+            break;
+        case STATE_GAMEOVER:
+            runGameOver(deltaTime);
+            break;
+    }
+  
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
