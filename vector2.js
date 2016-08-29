@@ -1,4 +1,3 @@
-Vector2.js
 
 //constructor for the vector2 object
 var Vector2 = function ()
@@ -8,7 +7,7 @@ var Vector2 = function ()
 }
 
 //set the components of the vector object
-Vector2.prototype.Set = function (x, y)
+Vector2.prototype.set = function (x, y)
 {
     this.x = x;
     this.y = y;
