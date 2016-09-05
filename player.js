@@ -10,6 +10,7 @@ var ANIM_JUMP_RIGHT = 4;
 var ANIM_WALK_RIGHT = 5;
 var ANIM_MAX = 6;
 
+
 var Player = function ()
 {
     //this is for the animation of the sprite.
@@ -50,6 +51,12 @@ var Player = function ()
     this.jumping = false;
 
     this.direction = RIGHT;
+
+    //this adds the varible for the cooldown timer for shooting
+    this.cooldownTimer = 0;
+
+    //this adds the death variable.
+    player.isDead = false;
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -219,6 +226,19 @@ Player.prototype.update = function (deltaTime)
         {
             this.sprite.setAnimation(ANIM_JUMP_RIGHT);
         }
+    }    //this will make it so everytime the player shoots it will make the shooting sound.    if (keyboard.isKeyDown(keyboard.KEY_UP) == true)
+    {
+        jump = true;
+    }
+    if (this.cooldownTimer > 0)
+    {
+        this.cooldownTimer -= deltaTime;
+    }
+    if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <= 0)
+    {
+        sfxFire.play();
+        this.cooldownTimer = 0.3;
+        // Shoot a bullet
     }
 }
 
@@ -228,7 +248,7 @@ Player.prototype.update = function (deltaTime)
 Player.prototype.draw = function ()
 {
     //this will draw the animation
-    this.sprite.draw(context, this.position.x, this.position.y);
+    this.sprite.draw(context, this.position.x - worldOffsetX, this.position.y);
     context.save();
     context.translate(this.position.x, this.position.y);
     context.rotate(this.rotation);

@@ -11,6 +11,11 @@ var STATE_GAMEOVER = 2;
 
 var gameState = STATE_SPLASH;
 
+//add the variable for your score
+var score = 0;
+//adds the lives
+var lives = 3;
+
 // This function will return the time in seconds since the function 
 // was last called
 // You should only call this function once per frame
@@ -153,6 +158,9 @@ var LAYER_LADDERS = 2;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var cells = []; // the array that holds our simplified collision data
+//this adds the variables for your music
+var musicBackground;
+var sfxFire;
 function initialize()
 {
     for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++)
@@ -183,24 +191,79 @@ function initialize()
             }
         }
     }
-}
+    //this adds the code to implent the music into the game.
+            musicBackground = new Howl(
+        {
+            urls: ["background.ogg"],
+            loop: true,
+            buffer: true,
+            volume: 0.5
+         } );
+            musicBackground.play();
+            sfxFire = new Howl(
+        {
+             urls: ["fireEffect.ogg"],
+             buffer: true,
+             volume: 1,
+             onend: function() 
+             {
+            isSfxPlaying = false;
+            }
+        } );
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+var worldOffsetX = 0;
 //this is so it will draw the tiles from a different software
-function drawMap() {
-    for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) {
-        var idx = 0;
-        for (var y = 0; y < level1.layers[layerIdx].height; y++) {
-            for (var x = 0; x < level1.layers[layerIdx].width; x++) {
-                if (level1.layers[layerIdx].data[idx] != 0) {
+function drawMap()
+{
+    //this adds the sidescrolling part of the map
+
+    var startX = -1;
+    //we need to calculate how many tiles can fit on the screen. Then add 2 to this number (for the overhang on the left and right). 
+    //Because as we scroll left or right we need to draw part of the next tile in that direction
+    var maxTiles = Math.floor(SCREEN_WIDTH / TILE) + 2;
+    //Calculate the tile the player is currently on. Here we use a utility function (pixelToTile) 
+    //that takes a pixel coordinate and converts it to a tile coordinate.
+    var tileX = pixelToTile(player.position.x);
+    //Calculate the offset of the player from the origin of the tile it’s on. I’ve add the width of the tile to this, just to make the numbers work.
+    var offsetX = TILE + Math.floor(player.position.x % TILE);
+    //this will start the starting tile for the x-axis. we divide it by 2 because if the player is at the centre of the screen and moves to far left or right,
+    //it will stop the screen from going left and will make the player move instead
+    startX = tileX - Math.floor(maxTiles / 2);
+
+    if (startX < -1)
+    {
+        startX = 0;
+        offsetX = 0;
+    }
+    if (startX > MAP.tw - maxTiles)
+    {
+        startX = MAP.tw - maxTiles + 1;
+        offsetX = TILE;
+    }
+    //this will calulate the world x-axis offset, (in pixels) so that we can use this value for drawing the player later on.
+    worldOffsetX = startX * TILE + offsetX;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++)
+    {
+        for (var y = 0; y < level1.layers[layerIdx].height; y++)
+       {
+            var idx = y * level1.layers[layerIdx].width + startX;
+
+        for (var x = startX; x < startX + maxTiles; x++)
+        {
+                if (level1.layers[layerIdx].data[idx] != 0)
+                {
                     // the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
                     // correct tile
                     var tileIndex = level1.layers[layerIdx].data[idx] - 1;
                     var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
-                    var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_X)) * (TILESET_TILE + TILESET_SPACING);
-                    context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x * TILE, (y - 1) * TILE, TILESET_TILE, TILESET_TILE);
-                }
+                    var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
+                    context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, (x - startX) * TILE - offsetX, (y - 1) * TILE, TILESET_TILE, TILESET_TILE);
+                  }
+                
                 idx++;
             }
         }
@@ -225,6 +288,7 @@ function runSplash(deltaTime)
 
 function runGame(deltaTime)
 {
+    
     //update frame counter
     fpsTime += deltaTime;
     fpsCount++;
@@ -242,11 +306,26 @@ function runGame(deltaTime)
 
    
 
-    player.update(deltaTime);
-    player.draw();
+    
 
     enemy.update(deltaTime);
-    enemy.draw();
+    
+    // score
+    context.fillStyle = "red";
+    context.font = "24px Comic Sans ";
+    var scoreText = "Score:" + score;
+    context.fillText(scoreText, SCREEN_WIDTH - 170, 35);
+
+    //life counter
+    var heartImage = document.createElement("img");
+    heartImage.src = "heartImage.png";  
+
+    for (var i = 0; i < lives; i++)
+    {
+        context.drawImage(heartImage, 10 + ((heartImage.width + 5) * i), 30);
+    }
+
+    
 }
 
 function runGameOver(deltaTime)
@@ -261,6 +340,11 @@ function run()
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     var deltaTime = getDeltaTime();
+
+    player.update(deltaTime); // update the player before drawing the map
+
+    drawMap();
+    player.draw();
 
     switch(gameState)
     {
