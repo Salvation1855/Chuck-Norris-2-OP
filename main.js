@@ -104,6 +104,8 @@ var TILESET_COUNT_X = 14;
 //How many rows of tile images are in the tileset 
 var TILESET_COUNT_Y = 14;
 
+var LAYER_OBJECT_TRIGGERS;
+
 //load the images to use for the level tiles
 var tileset = document.createElement("img");
 tileset.src = "tileset.png";
@@ -160,57 +162,57 @@ var LAYER_LADDERS = 2;
 var cells = []; // the array that holds our simplified collision data
 //this adds the variables for your music
 var musicBackground;
-var sfxFire;
+var sfxFire;
+
 function initialize()
 {
-    for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++)
-    { // initialize the collision map
-        cells[layerIdx] = [];
-        var idx = 0;
-        for (var y = 0; y < level1.layers[layerIdx].height; y++)
+    
+
+    // initialize trigger layer in collision map
+    cells[LAYER_OBJECT_TRIGGERS] = [];
+    idx = 0;
+    for (var y = 0; y < level1.layers[LAYER_OBJECT_TRIGGERS].height; y++)
+    {
+        cells[LAYER_OBJECT_TRIGGERS][y] = [];
+        for (var x = 0; x < level1.layers[LAYER_OBJECT_TRIGGERS].width; x++)
         {
-            cells[layerIdx][y] = [];
-            for (var x = 0; x < level1.layers[layerIdx].width; x++)
+            if (level1.layers[LAYER_OBJECT_TRIGGERS].data[idx] != 0)
             {
-                if (level1.layers[layerIdx].data[idx] != 0)
-                {
-                    // for each tile we find in the layer data, we need to create 4 collisions
-                    // (because our collision squares are 35x35 but the tile in the
-                    // level are 70x70)
-                    cells[layerIdx][y][x] = 1;
-                    cells[layerIdx][y - 1][x] = 1;
-                    cells[layerIdx][y - 1][x + 1] = 1;
-                    cells[layerIdx][y][x + 1] = 1;
-                }
-                else if (cells[layerIdx][y][x] != 1)
-                {
-                    // if we haven't set this cell's value, then set it to 0 now
-                    cells[layerIdx][y][x] = 0;
-                }
-                idx++;
+                cells[LAYER_OBJECT_TRIGGERS][y][x] = 1;
+                cells[LAYER_OBJECT_TRIGGERS][y - 1][x] = 1;
+                cells[LAYER_OBJECT_TRIGGERS][y - 1][x + 1] = 1;
+                cells[LAYER_OBJECT_TRIGGERS][y][x + 1] = 1;
             }
+            else if (cells[LAYER_OBJECT_TRIGGERS][y][x] != 1)
+            {
+                // if we haven't set this cell's value, then set it to 0 now
+                cells[LAYER_OBJECT_TRIGGERS][y][x] = 0;
+            }
+            idx++;
         }
     }
+
     //this adds the code to implent the music into the game.
-            musicBackground = new Howl(
-        {
-            urls: ["background.ogg"],
-            loop: true,
-            buffer: true,
-            volume: 0.5
-         } );
-            musicBackground.play();
-            sfxFire = new Howl(
-        {
-             urls: ["fireEffect.ogg"],
-             buffer: true,
-             volume: 1,
-             onend: function() 
-             {
-            isSfxPlaying = false;
-            }
-        } );
-}
+    musicBackground = new Howl(
+    {
+        urls: ["background.ogg"],
+        loop: true,
+        buffer: true,
+        volume: 0.5
+    });
+        musicBackground.play();
+        sfxFire = new Howl(
+   {
+         urls: ["fireEffect.ogg"],
+         buffer: true,
+         volume: 1,
+         onend: function ()
+     {
+         isSfxPlaying = false;
+     }
+    });
+
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

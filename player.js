@@ -74,7 +74,7 @@ Player.prototype.update = function (deltaTime)
     {
         right = true;
     }
-    if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true)
+    if (keyboard.isKeyDown(keyboard.KEY_UP) == true)
     {
         jump = true;
     }
@@ -189,13 +189,18 @@ Player.prototype.update = function (deltaTime)
         if (this.sprite.currentAnimation != ANIM_WALK_LEFT &&
             this.jumping == false)
             this.sprite.setAnimation(ANIM_WALK_LEFT);
-    }    //this will make it so if you press left on keyboard the animation will go right.    else if (keyboard.isKeyDown(keyboard.KEY_RIGHT) == true) {
+    }
+
+    //this will make it so if you press left on keyboard the animation will go right.
+    else if (keyboard.isKeyDown(keyboard.KEY_RIGHT) == true) {
         right = true;
         this.direction = RIGHT;
         if (this.sprite.currentAnimation != ANIM_WALK_RIGHT &&
             this.jumping == false)
             this.sprite.setAnimation(ANIM_WALK_RIGHT);
-    }    //this will make it so it will return the animation in to its idle form    else
+    }
+    //this will make it so it will return the animation in to its idle form
+    else
     {
         if (this.jumping == false && this.falling == false)
         {
@@ -211,7 +216,7 @@ Player.prototype.update = function (deltaTime)
             }
         }
     }
-    if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true)
+    if (keyboard.isKeyDown(keyboard.KEY_UP) == true)
     {
         jump = true;
         if (left == true)
@@ -222,7 +227,9 @@ Player.prototype.update = function (deltaTime)
         {
             this.sprite.setAnimation(ANIM_JUMP_RIGHT);
         }
-    }    //this will make it so everytime the player shoots it will make the shooting sound.    if (keyboard.isKeyDown(keyboard.KEY_UP) == true)
+    }
+    //this will make it so everytime the player shoots it will make the shooting sound.
+    if (keyboard.isKeyDown(keyboard.KEY_UP) == true)
     {
         jump = true;
     }
@@ -235,7 +242,13 @@ Player.prototype.update = function (deltaTime)
         sfxFire.play();
         this.cooldownTimer = 0.3;
         // Shoot a bullet
-    }
+    }
+    
+    //this adds the trigger when he enters it
+    if (cellAtTileCoord(LAYER_OBJECT_TRIGGERS, tx, ty) == true)
+    {
+        // game over man, game over
+    }
 }
 
 
@@ -244,7 +257,8 @@ Player.prototype.update = function (deltaTime)
 Player.prototype.draw = function ()
 {
     //this will draw the animation
-    this.sprite.draw(context, this.position.x - worldOffsetX, this.position.y);
+    this.sprite.draw(context, this.position.x - worldOffsetX, this.position.y);
+
     context.save();
     context.translate(this.position.x, this.position.y);
     context.rotate(this.rotation);
