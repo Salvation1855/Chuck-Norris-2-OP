@@ -10,7 +10,6 @@ var ANIM_JUMP_RIGHT = 4;
 var ANIM_WALK_RIGHT = 5;
 var ANIM_MAX = 6;
 
-
 var Player = function ()
 {
     //this is for the animation of the sprite.
@@ -54,9 +53,6 @@ var Player = function ()
 
     //this adds the varible for the cooldown timer for shooting
     this.cooldownTimer = 0;
-
-    //this adds the death variable.
-    player.isDead = false;
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

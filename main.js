@@ -324,8 +324,6 @@ function runGame(deltaTime)
     {
         context.drawImage(heartImage, 10 + ((heartImage.width + 5) * i), 30);
     }
-
-    
 }
 
 function runGameOver(deltaTime)
