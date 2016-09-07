@@ -244,11 +244,7 @@ Player.prototype.update = function (deltaTime)
         // Shoot a bullet
     }
     
-    //this adds the trigger when he enters it
-    if (cellAtTileCoord(LAYER_OBJECT_TRIGGERS, tx, ty) == true)
-    {
-        // game over man, game over
-    }
+    
 }
 
 

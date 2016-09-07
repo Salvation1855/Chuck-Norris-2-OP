@@ -11,10 +11,13 @@ var STATE_GAMEOVER = 2;
 
 var gameState = STATE_SPLASH;
 
+
 //add the variable for your score
 var score = 0;
 //adds the lives
 var lives = 3;
+//adds the timer for the game
+var timer = 120;
 
 // This function will return the time in seconds since the function 
 // was last called
@@ -82,12 +85,6 @@ var player = new Player();
 var enemy = new Enemy();
 var keyboard = new Keyboard();
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//physics for the game
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //the number of layers in your map
 var LAYER_COUNT = 4;
@@ -215,6 +212,8 @@ function initialize()
         }
     }
 
+   
+
     //this adds the code to implent the music into the game.
     musicBackground = new Howl(
     {
@@ -295,7 +294,7 @@ function drawMap()
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var splashTimer = 3;
+var splashTimer = 1;
 function runSplash(deltaTime)
 {
     //this adds the splash
@@ -338,8 +337,18 @@ function runGame(deltaTime)
     // score
     context.fillStyle = "red";
     context.font = "24px Comic Sans ";
+
     var scoreText = "Score:" + score;
     context.fillText(scoreText, SCREEN_WIDTH - 170, 35);
+
+    var timerText = "Timer Left" + timer.toFixed(0);
+    context.fillText(timerText, SCREEN_WIDTH - 600, 70);
+
+    if(timer = 0)
+    {
+        gameState = STATE_GAMEOVER;
+        return;
+    }
 
     //life counter
     var heartImage = document.createElement("img");
@@ -349,11 +358,25 @@ function runGame(deltaTime)
     {
         context.drawImage(heartImage, 10 + ((heartImage.width + 5) * i), 30);
     }
+    if(player.position.y >= canvas.height)
+    {
+        lives -= 1;
+        player.position.set(9 * TILE, 0 * TILE);
+
+        if(lives <= 0)
+        {
+            gameState = STATE_GAMEOVER;
+            return;
+        }
+    }
 }
 
 function runGameOver(deltaTime)
 {
-
+    //this customizies the splash 
+    context.fillStyle = "#000";
+    context.font = "35px Arial";
+    context.fillText("GAME OVER MANNNN", 150, 240);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -384,15 +407,6 @@ function run()
   
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//this initlizied the function for collisons.
-initialize();
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // This code will set up the framework so that the 'run' function is called 60 times per second.
 // We have a some options to fall back on in case the browser doesn't support our preferred method.
