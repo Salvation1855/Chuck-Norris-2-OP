@@ -11,12 +11,11 @@ var STATE_GAMEOVER = 2;
 
 var gameState = STATE_SPLASH;
 
-
 //add the variable for your score
 var score = 0;
 //adds the lives
 var lives = 3;
-//adds the timer for the game
+//this adds the variable for the timer
 var timer = 120;
 
 // This function will return the time in seconds since the function 
@@ -86,6 +85,7 @@ var enemy = new Enemy();
 var keyboard = new Keyboard();
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 //the number of layers in your map
 var LAYER_COUNT = 4;
 //specifies how big your level is, etc: 60 tiles wide by 15 tiles high
@@ -100,8 +100,6 @@ var TILESET_SPACING = 2;
 var TILESET_COUNT_X = 14;
 //How many rows of tile images are in the tileset 
 var TILESET_COUNT_Y = 14;
-
-var LAYER_OBJECT_TRIGGERS;
 
 //load the images to use for the level tiles
 var tileset = document.createElement("img");
@@ -164,13 +162,18 @@ var sfxFire;
 
 function initialize()
 {
-    for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
+
+    for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++)
+    { // initialize the collision map
         cells[layerIdx] = [];
         var idx = 0;
-        for (var y = 0; y < level1.layers[layerIdx].height; y++) {
+        for (var y = 0; y < level1.layers[layerIdx].height; y++)
+        {
             cells[layerIdx][y] = [];
-            for (var x = 0; x < level1.layers[layerIdx].width; x++) {
-                if (level1.layers[layerIdx].data[idx] != 0) {
+            for (var x = 0; x < level1.layers[layerIdx].width; x++)
+            {
+                if (level1.layers[layerIdx].data[idx] != 0)
+                {
                     // for each tile we find in the layer data, we need to create 4 collisions
                     // (because our collision squares are 35x35 but the tile in the
                     // level are 70x70)
@@ -179,7 +182,8 @@ function initialize()
                     cells[layerIdx][y - 1][x + 1] = 1;
                     cells[layerIdx][y][x + 1] = 1;
                 }
-                else if (cells[layerIdx][y][x] != 1) {
+                else if (cells[layerIdx][y][x] != 1)
+                {
                     // if we haven't set this cell's value, then set it to 0 now
                     cells[layerIdx][y][x] = 0;
                 }
@@ -212,29 +216,29 @@ function initialize()
         }
     }
 
-   
+  
 
     //this adds the code to implent the music into the game.
-    musicBackground = new Howl(
-    {
-        urls: ["background.ogg"],
-        loop: true,
-        buffer: true,
-        volume: 0.5
-    });
-        musicBackground.play();
-        sfxFire = new Howl(
-   {
-         urls: ["fireEffect.ogg"],
-         buffer: true,
-         volume: 1,
-         onend: function ()
-     {
-         isSfxPlaying = false;
-     }
-    });
-
+            musicBackground = new Howl(
+        {
+            urls: ["background.ogg"],
+            loop: true,
+            buffer: true,
+            volume: 0.5
+         } );
+            musicBackground.play();
+            sfxFire = new Howl(
+        {
+             urls: ["fireEffect.ogg"],
+             buffer: true,
+             volume: 1,
+             onend: function() 
+             {
+            isSfxPlaying = false;
+            }
+        } );
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -337,14 +341,18 @@ function runGame(deltaTime)
     // score
     context.fillStyle = "red";
     context.font = "24px Comic Sans ";
-
-    var scoreText = "Score:" + score;
+    var scoreText = "Score:" + score.toFixed(0);
     context.fillText(scoreText, SCREEN_WIDTH - 170, 35);
+    
+    //timer
+    
+    var timerText = "Timer Left:" + timer.toFixed(0);
+    context.fillText(timerText, SCREEN_WIDTH - 400, 35);
 
-    var timerText = "Timer Left" + timer.toFixed(0);
-    context.fillText(timerText, SCREEN_WIDTH - 600, 70);
+    timer -= deltaTime;
+    score += deltaTime * 0.2;
 
-    if(timer = 0)
+    if (timer < 0)
     {
         gameState = STATE_GAMEOVER;
         return;
@@ -358,12 +366,12 @@ function runGame(deltaTime)
     {
         context.drawImage(heartImage, 10 + ((heartImage.width + 5) * i), 30);
     }
-    if(player.position.y >= canvas.height)
+    if (player.position.y >= canvas.height)
     {
         lives -= 1;
         player.position.set(9 * TILE, 0 * TILE);
 
-        if(lives <= 0)
+        if (lives <= 0)
         {
             gameState = STATE_GAMEOVER;
             return;
@@ -378,6 +386,7 @@ function runGameOver(deltaTime)
     context.font = "35px Arial";
     context.fillText("GAME OVER MANNNN", 150, 240);
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function run()
@@ -407,6 +416,15 @@ function run()
   
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//this initlizied the function for collisons.
+initialize();
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // This code will set up the framework so that the 'run' function is called 60 times per second.
 // We have a some options to fall back on in case the browser doesn't support our preferred method.

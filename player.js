@@ -244,7 +244,12 @@ Player.prototype.update = function (deltaTime)
         // Shoot a bullet
     }
     
-    
+    if (cellAtTileCoord(LAYER_OBJECT_TRIGGERS, tx, ty) == true)
+    {
+        // game over splash screen
+        gameState = STATE_GAMEOVER;
+        return;
+    }
 }
 
 
