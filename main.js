@@ -90,7 +90,7 @@ var keyboard = new Keyboard();
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //the number of layers in your map
-var LAYER_COUNT = 3;
+var LAYER_COUNT = 4;
 //specifies how big your level is, etc: 60 tiles wide by 15 tiles high
 var MAP = { tw: 60, th: 15 };
 //the width/height of a tile in the tileset
@@ -152,10 +152,11 @@ function bound(value, min, max)
     return value;
 }
 
-var LAYER_COUNT = 3;
+var LAYER_COUNT = 4;
 var LAYER_BACKGOUND = 0;
 var LAYER_PLATFORMS = 1;
 var LAYER_LADDERS = 2;
+var LAYER_OBJECT_TRIGGERS = 3;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -166,7 +167,29 @@ var sfxFire;
 
 function initialize()
 {
-    
+    for (var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
+        cells[layerIdx] = [];
+        var idx = 0;
+        for (var y = 0; y < level1.layers[layerIdx].height; y++) {
+            cells[layerIdx][y] = [];
+            for (var x = 0; x < level1.layers[layerIdx].width; x++) {
+                if (level1.layers[layerIdx].data[idx] != 0) {
+                    // for each tile we find in the layer data, we need to create 4 collisions
+                    // (because our collision squares are 35x35 but the tile in the
+                    // level are 70x70)
+                    cells[layerIdx][y][x] = 1;
+                    cells[layerIdx][y - 1][x] = 1;
+                    cells[layerIdx][y - 1][x + 1] = 1;
+                    cells[layerIdx][y][x + 1] = 1;
+                }
+                else if (cells[layerIdx][y][x] != 1) {
+                    // if we haven't set this cell's value, then set it to 0 now
+                    cells[layerIdx][y][x] = 0;
+                }
+                idx++;
+            }
+        }
+    }
 
     // initialize trigger layer in collision map
     cells[LAYER_OBJECT_TRIGGERS] = [];
