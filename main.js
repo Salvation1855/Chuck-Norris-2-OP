@@ -298,7 +298,7 @@ function drawMap()
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var splashTimer = 1;
+var splashTimer = 3;
 function runSplash(deltaTime)
 {
     //this adds the splash
@@ -330,7 +330,7 @@ function runGame(deltaTime)
     context.fillStyle = "#f00";
     context.font = "14px Arial";
     context.fillText("FPS:" + fps, 5, 20, 100);
-    drawMap();
+   
 
    
 
@@ -351,6 +351,11 @@ function runGame(deltaTime)
 
     timer -= deltaTime;
     score += deltaTime * 0.2;
+
+    if (timer > 10)
+    {
+        timer.toFixed(2)
+    }
 
     if (timer < 0)
     {
