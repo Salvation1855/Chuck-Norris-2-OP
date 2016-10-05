@@ -247,7 +247,7 @@ Player.prototype.update = function (deltaTime)
     if (cellAtTileCoord(LAYER_OBJECT_TRIGGERS, tx, ty) == true)
     {
         // game over splash screen
-        gameState = STATE_GAMEOVER;
+        gameState = STATE_WONGAME;
         return;
     }
 }

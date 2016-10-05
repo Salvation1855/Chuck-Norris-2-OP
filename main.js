@@ -8,6 +8,8 @@ var endFrameMillis = Date.now();
 var STATE_SPLASH = 0;
 var STATE_GAME = 1;
 var STATE_GAMEOVER = 2;
+var STATE_MINUSLIFE = 3;
+var STATE_WONGAME = 4;
 
 var gameState = STATE_SPLASH;
 
@@ -309,6 +311,14 @@ function runSplash(deltaTime)
         return;
     }
     //this customizies the splash 
+    context.fillStyle = "#ccc";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    var StartingSplashPicture = document.createElement("img");
+    StartingSplashPicture.src = "Starting Splash Picture.jpg";
+
+    context.drawImage(StartingSplashPicture, 0, 0, canvas.width, canvas.height);
+
     context.fillStyle = "#000";
     context.font = "35px Arial";
     context.fillText("Start Game", 200, 240);
@@ -384,6 +394,22 @@ function runGame(deltaTime)
     }
 }
 
+function runGameMinusLife(deltaTime)
+{
+    player.position.set(9 * TILE, 0 * TILE);
+
+    if (gameState = STATE_MINUSLIFE && lives != 0)
+    {
+        lives = lives - 1
+        gameState = STATE_GAME
+    }
+
+    if (lives == 0)
+    {
+        gameState = STATE_GAMEOVER
+    }
+}
+
 function runGameOver(deltaTime)
 {
     //this customizies the splash 
@@ -392,6 +418,22 @@ function runGameOver(deltaTime)
     context.fillText("GAME OVER MANNNN", 150, 240);
 }
 
+function wonGame(deltaTime)
+{
+    var wonGamePicture = document.createElement("img");
+    wonGamePicture.src = "wonGamePicture.jpg";
+
+    context.drawImage(wonGamePicture, 0, 0, canvas.width, canvas.height);
+
+
+    context.fillStyle = "#33cc33";
+    context.font = "35px Arial";
+    context.fillText("YOU WON! You make America proud.", 25, 240);
+
+    context.fillStyle = "#e67300";
+    context.font = "35px Arial";
+    context.fillText("Your score was: " + score.toFixed(0), 150, 300);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function run()
@@ -416,6 +458,12 @@ function run()
             break;
         case STATE_GAMEOVER:
             runGameOver(deltaTime);
+            break;
+        case STATE_MINUSLIFE:
+            runGameMinusLife(deltaTime);
+            break;
+        case STATE_WONGAME:
+            wonGame(deltaTime);
             break;
     }
   
